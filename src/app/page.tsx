@@ -1,4 +1,4 @@
-'use client';                             
+'use client';
 import { useEffect, useState } from 'react';
 import { ImageEditor } from '@/components/ImageEditor';
 import { Toolbar } from '@/components/Toolbar';
@@ -18,7 +18,7 @@ export default function HomePage() {
     redo,
     reset,
     exportCanvas,
-    setGoogleFonts, // <- ADD this!
+    setGoogleFonts,
   } = useEditorStore();
 
   useEffect(() => {
@@ -32,9 +32,8 @@ export default function HomePage() {
         console.error('Failed to load saved state:', error);
       }
     }
-    // Load Google Fonts list on first mount
     GoogleFontsLoader.loadFontFamilies().then(families => setGoogleFonts(families));
-  }, []);
+  }, [setGoogleFonts]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -51,10 +50,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Image Text Composer</h1>
-          <div className="flex items-center gap-4">
+      <header className="bg-white border-b border-gray-200 px-4 py-4 md:px-6">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">Image Text Composer</h1>
+          <div className="flex items-center gap-3 flex-wrap">
             <div className="flex gap-2">
               <button onClick={undo} disabled={historyIndex <= 0}
                       className="px-3 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300">↶</button>
@@ -70,17 +69,30 @@ export default function HomePage() {
           </div>
         </div>
       </header>
-      <div className="flex flex-1">
-        <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
+
+      {/* Responsive main content container */}
+      <div className="flex-1 flex flex-col md:flex-row">
+        {/* Left sidebar */}
+        <aside className="w-full md:w-72 bg-white border-b md:border-r md:border-b-0 border-gray-200 flex-shrink-0">
           <Toolbar />
           <LayerPanel />
-        </div>
-        <div className="flex-1 flex items-center justify-center p-8">
+        </aside>
+        {/* Editor center */}
+        <main className="flex-1 flex items-center justify-center p-2 sm:p-4 md:p-8">
           <ImageEditor />
-        </div>
-        <div className="w-80 bg-white border-l border-gray-200">
+        </main>
+        {/* Right sidebar */}
+        <aside className="w-full md:w-80 bg-white border-t md:border-l md:border-t-0 border-gray-200 flex-shrink-0">
           <TextPropertiesPanel />
-        </div>
+        </aside>
+      </div>
+      {/* Mobile blocker overlay: only shown below md */}
+      <div className="fixed inset-0 z-50 bg-white bg-opacity-95 flex flex-col items-center justify-center md:hidden">
+        <h2 className="text-lg font-bold mb-4">Desktop Only</h2>
+        <p className="text-gray-600 text-center max-w-xs">
+          This editor is designed for desktop or tablet screen sizes.<br />
+          Please use a larger device for best experience.
+        </p>
       </div>
     </div>
   );
